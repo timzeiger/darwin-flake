@@ -22,7 +22,7 @@
           pkgs.google-chrome
           pkgs.gimp
           pkgs.vscode
-          pkgs.reaper
+          #pkgs.reaper
           pkgs.btop
           pkgs.fastfetch
           pkgs.fzf
@@ -61,7 +61,7 @@
       };
 
       fonts.packages = [
-        (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+        pkgs.nerd-fonts.jetbrains-mono
       ];
 
   system.activationScripts.applications.text = let
@@ -72,7 +72,6 @@
     };
   in
     pkgs.lib.mkForce ''
-    # Set up applications.
     echo "setting up /Applications..." >&2
     rm -rf /Applications/Nix\ Apps
     mkdir -p /Applications/Nix\ Apps
@@ -83,30 +82,16 @@
       ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
     done
         '';
-
-      # Auto upgrade nix package and the daemon service.
       services.nix-daemon.enable = true;
-      # nix.package = pkgs.nix;
-
-      # Necessary for using flakes on this system.
       nix.settings.experimental-features = "nix-command flakes";
-
       programs.zsh.enable = true;
-
       system.configurationRevision = self.rev or self.dirtyRev or null;
-
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
       system.stateVersion = 5;
-
-      # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "x86_64-darwin";
     };
   in
   {
-    # Build darwin flake using:
-    # $ darwin-rebuild build --flake .#simple
-    darwinConfigurations."iMac" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations.iMac = nix-darwin.lib.darwinSystem {
       modules = [
         configuration
         nix-homebrew.darwinModules.nix-homebrew
@@ -118,8 +103,6 @@
         }
       ];
     };
-
-    # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."iMac".pkgs;
+    darwinPackages = self.darwinConfigurations.iMac.pkgs;
   };
 }
