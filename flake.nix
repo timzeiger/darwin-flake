@@ -42,12 +42,12 @@
           "nextcloud"
           "dbeaver-community"
           "cheatsheet"
-          "spotify"
           "steam"
           "vlc"
           "sublime-text"
           "sublime-merge"
           "obsidian"
+          "openra"
         ];
         masApps = {
           "Bitwarden" = 1352778147;
