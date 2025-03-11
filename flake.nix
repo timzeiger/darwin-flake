@@ -18,7 +18,6 @@
         [ pkgs.vim
           pkgs.mkalias
           pkgs.tmux
-          pkgs.obsidian
           pkgs.google-chrome
           pkgs.gimp
           pkgs.vscode
@@ -38,17 +37,17 @@
           "firefox"
           "thunderbird@esr"
           "the-unarchiver"
-          "omnissa-horizon-client"
+          "vmware-horizon-client"
           "element"
           "nextcloud"
           "dbeaver-community"
           "cheatsheet"
           "spotify"
           "steam"
-          "balenaetcher"
-	  "vlc"
+          "vlc"
           "sublime-text"
           "sublime-merge"
+          "obsidian"
         ];
         masApps = {
           "Bitwarden" = 1352778147;
@@ -64,26 +63,28 @@
         pkgs.nerd-fonts.jetbrains-mono
       ];
 
-  system.activationScripts.applications.text = let
-    env = pkgs.buildEnv {
-      name = "system-applications";
-      paths = config.environment.systemPackages;
-      pathsToLink = "/Applications";
-    };
-  in
-    pkgs.lib.mkForce ''
-    echo "setting up /Applications..." >&2
-    rm -rf /Applications/Nix\ Apps
-    mkdir -p /Applications/Nix\ Apps
-    find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-    while read src; do
-      app_name=$(basename "$src")
-      echo "copying $src" >&2
-      ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-    done
-        '';
-      services.nix-daemon.enable = true;
+      # Enable nix
+      nix.enable = true;
       nix.settings.experimental-features = "nix-command flakes";
+
+      system.activationScripts.applications.text = let
+        env = pkgs.buildEnv {
+          name = "system-applications";
+          paths = config.environment.systemPackages;
+          pathsToLink = "/Applications";
+        };
+      in
+        pkgs.lib.mkForce ''
+        echo "setting up /Applications..." >&2
+        rm -rf /Applications/Nix\ Apps
+        mkdir -p /Applications/Nix\ Apps
+        find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
+        while read -r src; do
+          app_name=$(basename "$src")
+          echo "copying $src" >&2
+          ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+        done
+        '';
       programs.zsh.enable = true;
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 5;
