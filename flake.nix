@@ -26,6 +26,12 @@
           pkgs.fastfetch
           pkgs.fzf
           pkgs.neovim
+          pkgs.python3
+          pkgs.python3Packages.pip
+          pkgs.python3Packages.virtualenv
+          pkgs.python3Packages.ipython
+          pkgs.php
+          pkgs.php.packages.composer
         ];
 
       homebrew = {
